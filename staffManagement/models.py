@@ -1,6 +1,6 @@
 from django.db import models
 from django.forms import DateField
-from leaseManagement.models import Unit_Lease
+from leaseManagement.models import Unit_Lease, Application
 
 class Staff(models.Model):
     first_name = models.CharField(max_length=50)
@@ -32,7 +32,9 @@ class rent_payment_log(models.Model):
     check_number = models.IntegerField(null=True)
     online_transaction_number = models.IntegerField(null=True)
 
-
+class Staff_APP_Join(models.Model):
+    staff = models.ForeignKey(Staff, null=True, on_delete= models.SET_NULL)
+    application = models.ForeignKey(Application, null=True, on_delete= models.SET_NULL)
 
 
 

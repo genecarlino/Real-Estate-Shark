@@ -1,6 +1,6 @@
 from django.db import models
 from unitManagement.models import Unit
-#from staffManagement.models import Staff
+
 class Renter(models.Model):
     first_name = models.CharField(max_length=50)
     last_name = models.CharField(max_length=50)
@@ -8,20 +8,13 @@ class Renter(models.Model):
     identity_proof = models.CharField(max_length=100)
     permenant_address = models.TextField()
 
-
-
 class Application(models.Model):
     renter =  models.ForeignKey(Renter, null=True, on_delete= models.SET_NULL)
     unit =  models.ForeignKey(Unit, null=True, on_delete= models.SET_NULL)
-    #staff = models.ForeignKey(Staff, null=True, on_delete= models.SET_NULL) --circular import issue 
-
     requirement = models.CharField(max_length = 100, null= True)
-
     submit_date = models.DateTimeField(auto_now_add=True)
     processing_date = models.DateTimeField(null=True)
     processing_status = models.CharField(max_length=75, null=True, blank=True)
-
-
 
 class Unit_Lease(models.Model):
     application =  models.ForeignKey(Application, null=True, on_delete= models.SET_NULL)

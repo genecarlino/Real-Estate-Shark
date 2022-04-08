@@ -20,7 +20,7 @@ class Address(models.Model):
     zip = models.CharField(max_length=15)
 
 class UnitType(models.Model):
-    unit_Type = models.CharField(max_length=50)
+    unit_type = models.CharField(max_length=50)
 
 class Community(models.Model):
     address_id = models.ForeignKey(Address, null=True, on_delete= models.SET_NULL)
@@ -43,6 +43,7 @@ class Unit(models.Model):
     living_area_sf = models.IntegerField()
     unit_number = models.IntegerField(null=True)
     unit_at_floor =  models.IntegerField(null=True)
+
 
 
 
