@@ -1,7 +1,7 @@
 from django.urls import path
 from .views import (Leasing_Info_View, Address_View, Unit_Type_View, Community_View, Unit_View,
 Post_Leasing_Info_View, Post_Address_View, Post_Unit_Type_View, Post_Community_View,  Post_Unit_View,
-AddressList, UnitList)
+AddressList, UnitList, Example)
 
 # the as_view() turns class into functioning function
 urlpatterns = [
@@ -20,6 +20,9 @@ urlpatterns = [
 
     #listings
     path("addresslisting/", AddressList.as_view(), name="addressList"),
-    path('unitlisting/', UnitList.as_view(), name ="UnitListing" )
+    path('unitlisting/', UnitList.as_view(), name ="UnitListing" ),
+
+    #examples
+    path('example/', Example.as_view(), name="Example")
 
 ]   

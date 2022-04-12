@@ -72,8 +72,6 @@ class Unit_View(APIView):
         else:
             return Response("404 not found", status=status.HTTP_404_NOT_FOUND)
 
-
-
 class Community_View(APIView):
     def put(self, request, id):
         if 'community' in request.data and Community.objects.filter(id=id).exists():
@@ -118,7 +116,19 @@ class UnitList(APIView):
             }
             return Response(finalJson, status=status.HTTP_200_OK)
         else:
-            return Response("invalid")
+            unitLists = Unit.objects.all()
+            units = []
+            for unit in unitLists:
+                tempJson = unitJson(unit)
+                units.append(tempJson['unit'])
+            finalJson ={
+                "unitlisting" : {
+                    "units" : units,
+                    "count" : Unit.objects.all().count()
+                }
+            }
+            return Response(finalJson, status=status.HTTP_200_OK)
+
 
 
 class AddressList(APIView):
@@ -251,3 +261,10 @@ class Post_Unit_View(APIView):
                 return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
         else:
             return Response("Invalid data", status=status.HTTP_400_BAD_REQUEST)
+
+
+class Example(APIView):
+    def get(self, request):
+        unit = Unit.objects.get(id=1)
+        print("address:", unit.address_id.street_address)
+        return Response("hello there!")
