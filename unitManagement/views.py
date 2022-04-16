@@ -13,6 +13,7 @@ def unitJson(unit):
     # Time 1:08
     finalJson = {
             "unit" : {
+                "id" : unit.id,
                 "num_of_bedrooms"  			     : unit.num_of_bedrooms, 
                 "num_of_bathrooms" 			     : unit.num_of_bathrooms, 
                 "num_of_balcony"	 			 : unit.num_of_balcony,
@@ -128,8 +129,6 @@ class UnitList(APIView):
                 }
             }
             return Response(finalJson, status=status.HTTP_200_OK)
-
-
 
 class AddressList(APIView):
     def get(self, request):
@@ -251,17 +250,88 @@ class Post_Community_View(APIView):
 
 class Post_Unit_View(APIView):
     def post(self, request):
-        if "unit" in request.data:
-            serializer = Unit_Serializer(data=request.data["unit"])
-            if serializer.is_valid():
-                print("is valid")
-                serializer.save()
-                return Response('valid data')
-            else:
-                return Response(serializer.error_messages, status=status.HTTP_400_BAD_REQUEST)
+        communityObject = None
+        unitTypeObject = None
+        addressObject = None
+        leasingObject = None
+        if 'unit' in request.data:
+            fullData = request.data['unit']
         else:
-            return Response("Invalid data", status=status.HTTP_400_BAD_REQUEST)
+            return Response("invalid data", status=status.HTTP_400_BAD_REQUEST)
+        # print(request.data)
+        #request.data takes json object and converts it to dictionary for us to use
+        if "community" in request.data['unit']:
+            communityData = request.data['unit']["community"]
+            communityName = communityData.pop('community_name')
+            addressSerializer = Address_Serializer(data=communityData)
+            if addressSerializer.is_valid():
+                communityAddressObject = addressSerializer.save()
+            else:
+                return Response("invalid data", status=status.HTTP_400_BAD_REQUEST)
+            communityData = {
+                "address_id" : communityAddressObject.id,
+                "community_name": communityName
+            }
+            communitySerializer = Community_Serializer(data=communityData)
+            if communitySerializer.is_valid():
+                communityObject = communitySerializer.save()
+        if "leasing_info" in request.data['unit']:
+            # print("yep leasing exists")
+            leasingData = request.data['unit']['leasing_info']
+            leasingSerializer = Leasing_Info_Serializer(data=leasingData)
+            if leasingSerializer.is_valid():
+                leasingObject = leasingSerializer.save()
+        if ('street_address' in fullData and
+            'city' in fullData and
+            'state' in fullData and 
+            'county' in fullData and 
+            'zip' in fullData):
+            addressData = {
+                'street_address' : fullData['street_address'],
+                'city' :fullData['city'],
+                'state':fullData['state'],
+                'county' :fullData['county'],
+                'zip' : fullData['zip']
+            }
+            addressSerializer = Address_Serializer(data=addressData)
+            if addressSerializer.is_valid():
+                addressObject = addressSerializer.save()
+        if "unit_type" in fullData:
+            unitData = {
+                'unit_type': fullData['unit_type'] 
+            }
+            unitTypeSerializer = Unit_Type_Serializer(data=unitData)
+            if unitTypeSerializer.is_valid():
+                print("yep unit type valid")
+                unitTypeObject = unitTypeSerializer.save()
+        
+        unitData = {
+            "unit_type_id" : unitTypeObject.id,
+            "community_id" : communityObject.id,
+            "address_id" : addressObject.id,
+            "leasing_info_id" : leasingObject.id,
 
+            "num_of_bedrooms" : fullData["num_of_bedrooms"],
+            "num_of_bathrooms" : fullData["num_of_bathrooms"],
+            "num_of_balcony" :  fullData["num_of_balcony"],
+            "is_available" : fullData["is_available"],
+            "is_reserved" : fullData["is_reserved"],
+            "unit_availability_start_date" :fullData["unit_availability_start_date"],
+            "unit_availability_end_date" : fullData["unit_availability_end_date"],
+            "unit_description" : fullData["unit_description"],
+            "living_area_sf" : fullData["living_area_sf"],
+            "unit_number" : fullData["unit_number"],
+            "unit_at_floor" : fullData["unit_at_floor"],
+        }
+        unitSerialier = Unit_Serializer(data=unitData)
+        if unitSerialier.is_valid():
+            print('valid unit!')
+            unitSerialier.save()
+        else:
+            print("invalid unit")
+            return Response(unitSerialier.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response("hello there from unit")
 
 class Example(APIView):
     def get(self, request):
