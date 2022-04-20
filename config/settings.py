@@ -25,7 +25,10 @@ SECRET_KEY = '(%*4go0#l%ta__o!d+yr+x=(()tskf3dw=60-*a=2j=exa9y+4'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CORS_ALLOW_ALL_ORIGINS = True # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
+CORS_ALLOW_CREDENTIALS = True
 
 
 # Application definition
@@ -43,7 +46,9 @@ INSTALLED_APPS = [
     "staffManagement",
     "leaseManagement",
     #3rd parties app
-    "rest_framework"
+    "rest_framework",
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
@@ -54,6 +59,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'corsheaders.middleware.CorsMiddleware',
+
+
 ]
 
 ROOT_URLCONF = 'config.urls'

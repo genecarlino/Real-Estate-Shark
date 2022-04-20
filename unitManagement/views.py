@@ -1,4 +1,5 @@
 from ast import Add
+from urllib import response
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -338,3 +339,7 @@ class Example(APIView):
         unit = Unit.objects.get(id=1)
         print("address:", unit.address_id.street_address)
         return Response("hello there!")
+
+    def post (self,request):
+        print(request.data)
+        return Response("elllo there")
